@@ -16,49 +16,54 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             color: white;
-            padding: 20px;
+            padding: 10px;
+            overflow-x: hidden;
         }
         
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            max-width: 500px;
             width: 100%;
+            max-width: min(95vw, 500px);
+            margin: 0 auto;
+            flex: 1;
         }
         
         h1 {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-align: center;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: clamp(1.5rem, 5vw, 2rem);
         }
         
         .game-info {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             background: rgba(0, 0, 0, 0.3);
-            padding: 10px 15px;
-            border-radius: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: clamp(0.9rem, 3vw, 1rem);
         }
         
         #game-board {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
-            width: 100%;
-            aspect-ratio: 1 / 1;
+            width: min(95vw, 400px);
+            height: min(95vw, 400px);
             background-color: #0d1b2a;
             border: 3px solid #415a77;
             border-radius: 5px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .cell {
@@ -129,19 +134,19 @@
                 ". up ."
                 "left . right"
                 ". down .";
-            gap: 10px;
+            gap: 8px;
             margin-top: 10px;
-            width: 200px;
+            width: min(70vw, 200px);
         }
         
         .control-btn {
-            width: 60px;
-            height: 60px;
+            width: min(15vw, 60px);
+            height: min(15vw, 60px);
             background-color: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
             color: white;
-            font-size: 24px;
+            font-size: clamp(1rem, 4vw, 1.5rem);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -176,17 +181,18 @@
         }
         
         #start-btn {
-            margin-top: 20px;
-            padding: 12px 30px;
+            margin-top: 15px;
+            padding: 10px 25px;
             background-color: #3b82f6;
             color: white;
             border: none;
             border-radius: 30px;
-            font-size: 18px;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             transition: all 0.3s;
+            width: min(80vw, 200px);
         }
         
         #start-btn:hover {
@@ -195,47 +201,140 @@
         }
         
         #game-over {
-            position: absolute;
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 20px;
             border-radius: 15px;
             text-align: center;
             display: none;
             z-index: 10;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            width: min(85vw, 400px);
         }
         
         #game-over h2 {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             color: #ef4444;
+            font-size: clamp(1.3rem, 5vw, 1.8rem);
         }
         
         #final-score {
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            margin-bottom: 15px;
         }
         
         .instructions {
             background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            line-height: 1.5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            line-height: 1.4;
+            text-align: center;
+            width: 100%;
         }
         
-        @media (max-width: 500px) {
-            .control-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
+        #restart-btn {
+            padding: 8px 20px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+        
+        #restart-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        /* Çok küçük ekranlar için ekstra ayarlamalar */
+        @media (max-height: 600px) {
+            .container {
+                justify-content: flex-start;
+            }
+            
+            h1 {
+                margin-bottom: 5px;
+            }
+            
+            .instructions {
+                margin-bottom: 5px;
+                padding: 8px;
+            }
+            
+            .game-info {
+                margin-bottom: 5px;
+                padding: 6px 10px;
+            }
+            
+            #game-board {
+                margin-bottom: 10px;
+                width: min(90vw, 350px);
+                height: min(90vw, 350px);
             }
             
             .controls {
-                width: 170px;
+                margin-top: 5px;
+            }
+            
+            #start-btn {
+                margin-top: 10px;
+            }
+        }
+        
+        /* Yatay (landscape) mod için ayarlamalar */
+        @media (max-width: 768px) and (orientation: landscape) {
+            body {
+                padding: 5px;
+                justify-content: flex-start;
+            }
+            
+            .container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                max-width: 100%;
+            }
+            
+            h1 {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .instructions {
+                width: 100%;
+                margin-bottom: 5px;
+                padding: 5px;
+            }
+            
+            .game-info {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            #game-board {
+                width: min(50vh, 45vw);
+                height: min(50vh, 45vw);
+                margin: 0 10px 5px 0;
+            }
+            
+            .controls-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            #start-btn {
+                margin-top: 10px;
+                width: min(40vw, 180px);
             }
         }
     </style>
@@ -255,14 +354,16 @@
         
         <div id="game-board"></div>
         
-        <div class="controls">
-            <button class="control-btn" id="up">↑</button>
-            <button class="control-btn" id="left">←</button>
-            <button class="control-btn" id="right">→</button>
-            <button class="control-btn" id="down">↓</button>
+        <div class="controls-container">
+            <div class="controls">
+                <button class="control-btn" id="up">↑</button>
+                <button class="control-btn" id="left">←</button>
+                <button class="control-btn" id="right">→</button>
+                <button class="control-btn" id="down">↓</button>
+            </div>
+            
+            <button id="start-btn">OYUNU BAŞLAT</button>
         </div>
-        
-        <button id="start-btn">OYUNU BAŞLAT</button>
         
         <div id="game-over">
             <h2>Yağmur'a Yakalandın!</h2>
@@ -282,7 +383,7 @@
             const finalScoreDisplay = document.getElementById('final-score');
             const restartBtn = document.getElementById('restart-btn');
             
-            // Harita boyutunu 12x12 olarak değiştirdik
+            // Harita boyutunu 8x8 olarak değiştirdik
             const boardSize = 8;
             let snake = [{x: 4, y: 4}]; // Başlangıç pozisyonunu merkeze yakın yaptık
             let food = {};
@@ -602,7 +703,7 @@
                 }
                 
                 // Oyun durumunu sıfırla
-                snake = [{x: 6, y: 6}];
+                snake = [{x: 4, y: 4}];
                 direction = 'right';
                 nextDirection = 'right';
                 score = 0;
