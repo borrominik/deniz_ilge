@@ -245,7 +245,7 @@
         <h1>Klasik Yılan Oyunu</h1>
         
         <div class="instructions">
-            <p>Yılanı yön tuşları ile kontrol edin. Yemleri toplayın ve büyüyün. Engellere veya kendinize çarpmayın!</p>
+            <p>Deniz İlge'yi yön tuşları ile kontrol edin. Sütleri toplayın ve büyüyün. Yağmurlar'dan uzak durun!</p>
         </div>
         
         <div class="game-info">
@@ -265,7 +265,7 @@
         <button id="start-btn">OYUNU BAŞLAT</button>
         
         <div id="game-over">
-            <h2>Oyun Bitti!</h2>
+            <h2>Yağmur'a Yakalandın!</h2>
             <p id="final-score">Skorunuz: 0</p>
             <button id="restart-btn">Tekrar Oyna</button>
         </div>
@@ -454,7 +454,7 @@
             function createObstacles() {
                 obstacles = [];
                 
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < 2; i++) {
                     let newObstacle;
                     let obstacleOnSnakeOrFood;
                     
@@ -620,7 +620,7 @@
                 
                 // Oyun döngüsünü başlat
                 clearInterval(gameInterval);
-                gameInterval = setInterval(moveSnake, 250);
+                gameInterval = setInterval(moveSnake, 300);
             }
             
             // Oyunu bitir
