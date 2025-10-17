@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klasik Yılan Oyunu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-color: #0d1b2a;
+            border: 3px solid #415a77;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .cell {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        
+        .snake {
+            background-color: #4ade80;
+            border-radius: 2px;
+        }
+        
+        .snake-head {
+            background-color: transparent;
+            border-radius: 4px;
+        }
+        
+        .snake-head-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .food {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .food-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            animation: pulse 1s infinite alternate;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        @keyframes pulse {
+            from { transform: scale(0.8); }
+            to { transform: scale(1.1); }
+        }
+        
+        .obstacle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+        }
+        
+        .obstacle-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-areas:
+                ". up ."
+                "left . right"
+                ". down .";
+            gap: 10px;
+            margin-top: 10px;
+            width: 200px;
+        }
+        
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        #up {
+            grid-area: up;
+            justify-self: center;
+        }
+        
+        #left {
+            grid-area: left;
+            justify-self: end;
+        }
+        
+        #right {
+            grid-area: right;
+            justify-self: start;
+        }
+        
+        #down {
+            grid-area: down;
+            justify-self: center;
+        }
+        
+        #start-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+        
+        #start-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            display: none;
+            z-index: 10;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+        }
+        
+        #game-over h2 {
+            margin-bottom: 15px;
+            color: #ef4444;
+        }
+        
+        #final-score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 500px) {
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .controls {
+                width: 170px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Klasik Yılan Oyunu</h1>
+        
+        <div class="instructions">
+            <p>Yılanı yön tuşları ile kontrol edin. Yemleri toplayın ve büyüyün. Engellere veya kendinize çarpmayın!</p>
+        </div>
+        
+        <div class="game-info">
+            <div>Skor: <span id="score">0</span></div>
+            <div>En Yüksek: <span id="high-score">0</span></div>
+        </div>
+        
+        <div id="game-board"></div>
+        
+        <div class="controls">
+            <button class="control-btn" id="up">↑</button>
+            <button class="control-btn" id="left">←</button>
+            <button class="control-btn" id="right">→</button>
+            <button class="control-btn" id="down">↓</button>
+        </div>
+        
+        <button id="start-btn">OYUNU BAŞLAT</button>
+        
+        <div id="game-over">
+            <h2>Oyun Bitti!</h2>
+            <p id="final-score">Skorunuz: 0</p>
+            <button id="restart-btn">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Oyun değişkenleri
+            const gameBoard = document.getElementById('game-board');
+            const scoreDisplay = document.getElementById('score');
+            const highScoreDisplay = document.getElementById('high-score');
+            const startBtn = document.getElementById('start-btn');
+            const gameOverScreen = document.getElementById('game-over');
+            const finalScoreDisplay = document.getElementById('final-score');
+            const restartBtn = document.getElementById('restart-btn');
+            
+            // Harita boyutunu 12x12 olarak değiştirdik
+            const boardSize = 8;
+            let snake = [{x: 4, y: 4}]; // Başlangıç pozisyonunu merkeze yakın yaptık
+            let food = {};
+            let obstacles = [];
+            let direction = 'right';
+            let nextDirection = 'right';
+            let gameInterval;
+            let score = 0;
+            let highScore = localStorage.getItem('snakeHighScore') || 0;
+            let gameRunning = false;
+            
+            // Görsel URL'leri - kendi görsellerinizin URL'leri ile değiştirin
+            const images = {
+                snakeHead: 'https://imgur.com/Yx7AFwZ.png',
+                food: 'https://imgur.com/hGKh4sG.png',
+                obstacle1: 'https://imgur.com/Z17UDL4.png',
+                obstacle2: 'https://imgur.com/Z17UDL4.png',
+                obstacle3: 'https://imgur.com/Z17UDL4.png'
+            };
+            
+            // Görselleri önceden yükle
+            const preloadedImages = {};
+            function preloadImages() {
+                return new Promise((resolve) => {
+                    let loadedCount = 0;
+                    const totalImages = Object.keys(images).length;
+                    
+                    Object.keys(images).forEach(key => {
+                        const img = new Image();
+                        img.onload = () => {
+                            preloadedImages[key] = img;
+                            loadedCount++;
+                            if (loadedCount === totalImages) resolve();
+                        };
+                        img.onerror = () => {
+                            console.error(`Görsel yüklenemedi: ${images[key]}`);
+                            // Hata durumunda yer tutucu oluştur
+                            const canvas = document.createElement('canvas');
+                            canvas.width = key === 'food' ? 90 : 100;
+                            canvas.height = key === 'food' ? 90 : 100;
+                            const ctx = canvas.getContext('2d');
+                            ctx.fillStyle = key === 'food' ? '#ef4444' : 
+                                           key === 'snakeHead' ? '#22c55e' : '#8b5cf6';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            ctx.fillStyle = 'white';
+                            ctx.font = '16px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(key === 'snakeHead' ? 'YILAN' : 
+                                        key === 'food' ? 'YEM' : 'ENGEL', 
+                                        canvas.width/2, canvas.height/2);
+                            preloadedImages[key] = canvas;
+                            loadedCount++;
+                            if (loadedCount === totalImages) resolve();
+                        };
+                        img.src = images[key];
+                    });
+                });
+            }
+            
+            // Yüksek skoru göster
+            highScoreDisplay.textContent = highScore;
+            
+            // Oyun tahtasını oluştur
+            function createBoard() {
+                gameBoard.innerHTML = '';
+                for (let i = 0; i < boardSize * boardSize; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.index = i;
+                    gameBoard.appendChild(cell);
+                }
+            }
+            
+            // Yılanı çiz
+            function drawSnake() {
+                // Önce tüm yılan hücrelerini temizle
+                document.querySelectorAll('.snake, .snake-head').forEach(cell => {
+                    cell.classList.remove('snake', 'snake-head');
+                    // Görselleri temizle
+                    const existingImages = cell.querySelectorAll('img');
+                    existingImages.forEach(img => img.remove());
+                });
+                
+                // Yılanı çiz
+                snake.forEach((segment, index) => {
+                    const cellIndex = segment.y * boardSize + segment.x;
+                    const cell = gameBoard.children[cellIndex];
+                    
+                    if (index === 0) {
+                        cell.classList.add('snake-head');
+                        // Yılan başı için görsel ekle
+                        const img = document.createElement('img');
+                        img.src = preloadedImages.snakeHead.src || images.snakeHead;
+                        img.alt = 'Yılan Başı';
+                        img.classList.add('snake-head-image');
+                        // Yönüne göre döndür
+                        img.style.transform = getRotation();
+                        cell.appendChild(img);
+                    } else {
+                        cell.classList.add('snake');
+                    }
+                });
+            }
+            
+            // Yılanın yönüne göre dönüş açısı hesapla
+            function getRotation() {
+                switch(direction) {
+                    case 'up': return 'rotate(-90deg)';
+                    case 'down': return 'rotate(90deg)';
+                    case 'left': return 'rotate(180deg)';
+                    case 'right': return 'rotate(0deg)';
+                    default: return 'rotate(0deg)';
+                }
+            }
+            
+            // Yem oluştur
+            function createFood() {
+                let newFood;
+                let foodOnSnakeOrObstacle;
+                
+                do {
+                    foodOnSnakeOrObstacle = false;
+                    newFood = {
+                        x: Math.floor(Math.random() * boardSize),
+                        y: Math.floor(Math.random() * boardSize)
+                    };
+                    
+                    // Yem yılanın üzerinde mi kontrol et
+                    for (let segment of snake) {
+                        if (segment.x === newFood.x && segment.y === newFood.y) {
+                            foodOnSnakeOrObstacle = true;
+                            break;
+                        }
+                    }
+                    
+                    // Yem engellerin üzerinde mi kontrol et
+                    for (let obstacle of obstacles) {
+                        if (obstacle.x === newFood.x && obstacle.y === newFood.y) {
+                            foodOnSnakeOrObstacle = true;
+                            break;
+                        }
+                    }
+                } while (foodOnSnakeOrObstacle);
+                
+                food = newFood;
+                
+                // Önceki yemi temizle
+                document.querySelectorAll('.food').forEach(cell => {
+                    cell.classList.remove('food');
+                    const existingImages = cell.querySelectorAll('img');
+                    existingImages.forEach(img => img.remove());
+                });
+                
+                // Yeni yemi çiz
+                const cellIndex = food.y * boardSize + food.x;
+                const cell = gameBoard.children[cellIndex];
+                cell.classList.add('food');
+                
+                // Yem için görsel ekle
+                const img = document.createElement('img');
+                img.src = preloadedImages.food.src || images.food;
+                img.alt = 'Yem';
+                img.classList.add('food-image');
+                cell.appendChild(img);
+            }
+            
+            // Engelleri oluştur
+            function createObstacles() {
+                obstacles = [];
+                
+                for (let i = 0; i < 3; i++) {
+                    let newObstacle;
+                    let obstacleOnSnakeOrFood;
+                    
+                    do {
+                        obstacleOnSnakeOrFood = false;
+                        newObstacle = {
+                            x: Math.floor(Math.random() * boardSize),
+                            y: Math.floor(Math.random() * boardSize)
+                        };
+                        
+                        // Engel yılanın üzerinde mi kontrol et
+                        for (let segment of snake) {
+                            if (segment.x === newObstacle.x && segment.y === newObstacle.y) {
+                                obstacleOnSnakeOrFood = true;
+                                break;
+                            }
+                        }
+                        
+                        // Engel yemin üzerinde mi kontrol et
+                        if (food.x === newObstacle.x && food.y === newObstacle.y) {
+                            obstacleOnSnakeOrFood = true;
+                        }
+                        
+                        // Engel diğer engellerin üzerinde mi kontrol et
+                        for (let obstacle of obstacles) {
+                            if (obstacle.x === newObstacle.x && obstacle.y === newObstacle.y) {
+                                obstacleOnSnakeOrFood = true;
+                                break;
+                            }
+                        }
+                    } while (obstacleOnSnakeOrFood);
+                    
+                    obstacles.push(newObstacle);
+                }
+                
+                // Önceki engelleri temizle
+                document.querySelectorAll('.obstacle').forEach(cell => {
+                    cell.classList.remove('obstacle');
+                    const existingImages = cell.querySelectorAll('img');
+                    existingImages.forEach(img => img.remove());
+                });
+                
+                // Engelleri çiz
+                obstacles.forEach((obstacle, index) => {
+                    const cellIndex = obstacle.y * boardSize + obstacle.x;
+                    const cell = gameBoard.children[cellIndex];
+                    cell.classList.add('obstacle');
+                    
+                    // Engel için görsel ekle
+                    const img = document.createElement('img');
+                    // Farklı engeller için farklı görseller
+                    const obstacleKey = index === 0 ? 'obstacle1' : 
+                                       index === 1 ? 'obstacle2' : 'obstacle3';
+                    img.src = preloadedImages[obstacleKey].src || images[obstacleKey];
+                    img.alt = `Engel ${index + 1}`;
+                    img.classList.add('obstacle-image');
+                    cell.appendChild(img);
+                });
+            }
+            
+            // Yılanı hareket ettir
+            function moveSnake() {
+                direction = nextDirection;
+                
+                // Yeni kafa pozisyonunu hesapla
+                const head = {...snake[0]};
+                
+                switch(direction) {
+                    case 'up':
+                        head.y -= 1;
+                        break;
+                    case 'down':
+                        head.y += 1;
+                        break;
+                    case 'left':
+                        head.x -= 1;
+                        break;
+                    case 'right':
+                        head.x += 1;
+                        break;
+                }
+                
+                // Duvarlardan geçiş kontrolü
+                if (head.x < 0) head.x = boardSize - 1;
+                if (head.x >= boardSize) head.x = 0;
+                if (head.y < 0) head.y = boardSize - 1;
+                if (head.y >= boardSize) head.y = 0;
+                
+                // Çarpışma kontrolü
+                if (checkCollision(head)) {
+                    gameOver();
+                    return;
+                }
+                
+                // Yeni kafayı ekle
+                snake.unshift(head);
+                
+                // Yem yendi mi kontrol et
+                if (head.x === food.x && head.y === food.y) {
+                    // Skoru artır
+                    score += 10;
+                    scoreDisplay.textContent = score;
+                    
+                    // Yeni yem oluştur
+                    createFood();
+                } else {
+                    // Yem yenmediyse kuyruğu kısalt
+                    snake.pop();
+                }
+                
+                // Ekranı güncelle
+                drawSnake();
+            }
+            
+            // Çarpışma kontrolü
+            function checkCollision(head) {
+                // Kendine çarpma kontrolü
+                for (let i = 0; i < snake.length; i++) {
+                    if (i !== 0 && head.x === snake[i].x && head.y === snake[i].y) {
+                        return true;
+                    }
+                }
+                
+                // Engellere çarpma kontrolü
+                for (let obstacle of obstacles) {
+                    if (head.x === obstacle.x && head.y === obstacle.y) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            
+            // Oyunu başlat
+            async function startGame() {
+                if (gameRunning) return;
+                
+                // Görseller yüklenene kadar bekle
+                if (Object.keys(preloadedImages).length === 0) {
+                    startBtn.textContent = 'GÖRSELLER YÜKLENİYOR...';
+                    startBtn.disabled = true;
+                    await preloadImages();
+                    startBtn.textContent = 'OYUNU BAŞLAT';
+                    startBtn.disabled = false;
+                }
+                
+                // Oyun durumunu sıfırla
+                snake = [{x: 6, y: 6}];
+                direction = 'right';
+                nextDirection = 'right';
+                score = 0;
+                scoreDisplay.textContent = score;
+                gameRunning = true;
+                startBtn.textContent = 'OYUN DEVAM EDİYOR';
+                startBtn.disabled = true;
+                gameOverScreen.style.display = 'none';
+                
+                // Oyun alanını hazırla
+                createBoard();
+                createFood();
+                createObstacles();
+                drawSnake();
+                
+                // Oyun döngüsünü başlat
+                clearInterval(gameInterval);
+                gameInterval = setInterval(moveSnake, 250);
+            }
+            
+            // Oyunu bitir
+            function gameOver() {
+                gameRunning = false;
+                clearInterval(gameInterval);
+                
+                // Yüksek skoru güncelle
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('snakeHighScore', highScore);
+                    highScoreDisplay.textContent = highScore;
+                }
+                
+                // Oyun bitti ekranını göster
+                finalScoreDisplay.textContent = `Skorunuz: ${score}`;
+                gameOverScreen.style.display = 'block';
+                startBtn.textContent = 'TEKRAR OYNA';
+                startBtn.disabled = false;
+            }
+            
+            // Yön tuşları için event listener'lar
+            document.addEventListener('keydown', (e) => {
+                if (!gameRunning) return;
+                
+                switch(e.key) {
+                    case 'ArrowUp':
+                        if (direction !== 'down') nextDirection = 'up';
+                        break;
+                    case 'ArrowDown':
+                        if (direction !== 'up') nextDirection = 'down';
+                        break;
+                    case 'ArrowLeft':
+                        if (direction !== 'right') nextDirection = 'left';
+                        break;
+                    case 'ArrowRight':
+                        if (direction !== 'left') nextDirection = 'right';
+                        break;
+                }
+            });
+            
+            // Mobil kontroller
+            document.getElementById('up').addEventListener('click', () => {
+                if (gameRunning && direction !== 'down') nextDirection = 'up';
+            });
+            
+            document.getElementById('down').addEventListener('click', () => {
+                if (gameRunning && direction !== 'up') nextDirection = 'down';
+            });
+            
+            document.getElementById('left').addEventListener('click', () => {
+                if (gameRunning && direction !== 'right') nextDirection = 'left';
+            });
+            
+            document.getElementById('right').addEventListener('click', () => {
+                if (gameRunning && direction !== 'left') nextDirection = 'right';
+            });
+            
+            // Başlat ve yeniden başlat butonları
+            startBtn.addEventListener('click', startGame);
+            restartBtn.addEventListener('click', startGame);
+            
+            // İlk oyun tahtasını oluştur
+            createBoard();
+        });
+    </script>
+</body>
+</html>
